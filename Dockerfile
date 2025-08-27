@@ -31,6 +31,23 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Expose port 80
 EXPOSE 80
+FROM php:8.2-apache
 
-# Start Apache
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql
+
+# Copy project files
+COPY . /var/www/html
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Point Apache to Laravel's public folder
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+
+# Enable Apache mod_rewrite (important for Laravel routes)
+RUN a2enmod rewrite
+
+EXPOSE 8080
 CMD ["apache2-foreground"]
+
