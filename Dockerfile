@@ -3,7 +3,7 @@ FROM php:8.2-cli
 # Install system dependencies na PHP extensions muhimu kwa Laravel
 RUN apt-get update && apt-get install -y \
     git unzip libpng-dev libonig-dev libxml2-dev zip curl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd dom xml tokenizer
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd dom xml
 
 # Install Composer
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
@@ -19,8 +19,6 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader --igno
 # Install Node dependencies and build assets (kama unatumia npm/vite)
 RUN if [ -f package.json ]; then npm install && npm run build; fi
 
-# Expose port ya Laravel serve
 EXPOSE 8080
 
-# Start the app
 CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8080
