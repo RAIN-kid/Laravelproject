@@ -2,10 +2,10 @@ FROM php:8.2-cli
 
 # 1. Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
-    git unzip libpng-dev libonig-dev libxml2-dev zip curl gnupg \
+    git unzip libpng-dev libjpeg-dev libxml2-dev zip curl gnupg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd dom xml
 
-# 2. Install Node.js (LTS) & npm
+# 2. Install Node.js (LTS 18.x)
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
@@ -19,12 +19,12 @@ WORKDIR /app
 COPY . .
 
 # 6. Install PHP dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-req=ext-dom --ignore-platform-req=ext-xml
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
-# 7. Install Node dependencies and build frontend assets (for Vite/Mix)
-RUN if [ -f package.json ]; then npm install && npm run build; fi
+# 7. Install Node dependencies & build frontend assets
+RUN npm install && npm run build
 
-# 8. Expose port for Laravel serve
+# 8. Expose port
 EXPOSE 8080
 
 # 9. Start Laravel app
