@@ -4,9 +4,9 @@ FROM php:8.2-cli
 RUN apt-get update && apt-get install -y \
     git unzip curl gnupg libpng-dev libjpeg-dev libfreetype6-dev \
     libxml2-dev libzip-dev libonig-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd dom xml
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd dom zip
 
-# 2. Install Node.js (LTS 18.x)
+# 2. Install Node.js (LTS 18)
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
@@ -20,7 +20,7 @@ WORKDIR /app
 COPY . .
 
 # 6. Install PHP dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # 7. Install Node dependencies & build frontend assets
 RUN npm install && npm run build
@@ -28,5 +28,5 @@ RUN npm install && npm run build
 # 8. Expose port
 EXPOSE 8080
 
-# 9. Start Laravel app
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8080
+# 9. Start Laravel app (serve from public directory)
+CMD php -S 0.0.0.0:8080 -t public
