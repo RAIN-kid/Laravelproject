@@ -2,7 +2,8 @@ FROM php:8.2-cli
 
 # 1. Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
-    git unzip libpng-dev libjpeg-dev libxml2-dev zip curl gnupg \
+    git unzip curl gnupg libpng-dev libjpeg-dev libfreetype6-dev \
+    libxml2-dev libzip-dev libonig-dev \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd dom xml
 
 # 2. Install Node.js (LTS 18.x)
